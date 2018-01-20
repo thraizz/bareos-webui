@@ -39,6 +39,7 @@ class WebuiSeleniumTest(unittest.TestCase):
             #d['loggingPrefs'] = { 'browser':'ALL' }
             self.driver = webdriver.Chrome('/usr/local/lib/chromium-browser/chromedriver')
         if self.browser == "firefox":
+
             d = DesiredCapabilities.FIREFOX
             d['loggingPrefs'] = { 'browser':'ALL' }
             fp = webdriver.FirefoxProfile()
@@ -50,7 +51,7 @@ class WebuiSeleniumTest(unittest.TestCase):
 
         self.verificationErrors = []
         self.accept_next_alert = True
-
+        self.driver.implicitly_wait(3)
 
 
     def test_login(self):
@@ -71,6 +72,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_for_url_and_click("/storage/")
         self.wait_for_url_and_click("/client/")
         self.wait_for_url_and_click("/restore/")
+        self.wait_and_click(By.XPATH, "//button[contains(text(),'Close')]")
         self.logout()
 
 
@@ -82,10 +84,10 @@ class WebuiSeleniumTest(unittest.TestCase):
 
         # CHANGING TO RESTORE TAB:
         self.wait_for_url_and_click("/restore/")
+        self.wait_and_click(By.XPATH, "(//button[@data-id='client'])", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         
         # SELECTING CLIENT:
         # Selects the correct client
-        self.wait_and_click(By.XPATH, "(//button[@data-id='client'])")
         self.wait_and_click(By.LINK_TEXT, self.client)
         
         # FILE-SELECTION:
@@ -101,8 +103,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.XPATH, "//input[@id='submit']")
         # Confirms alert that has text "Are you sure ?"
         self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
-
-        # TODO: next modal, job run message
+        self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-002']//button[.='Close']")
 
         # LOGOUT:
         self.logout()
@@ -125,15 +126,7 @@ class WebuiSeleniumTest(unittest.TestCase):
             sleep(self.waittime)
 
     def logout(self):
-        # TODO:
-        # dismiss modals. Occurs when client with no jobs is selected first.
-        #try:
-            #self.logger.info("closing modal")
-            ##self.driver.switch_to_alert().dismiss()
-            #self.close_alert_and_get_its_text()
-            #time.sleep(t+5)
-        #except NoAlertPresentException:
-            #self.logger.info("skipped closing alert: none present")
+
         self.wait_and_click(By.CSS_SELECTOR, "a.dropdown-toggle")
         self.wait_and_click(By.LINK_TEXT, "Logout")
         sleep(self.sleeptime)
@@ -177,21 +170,53 @@ class WebuiSeleniumTest(unittest.TestCase):
 
 
     def wait_for_url_and_click(self, what):
+        logger = logging.getLogger()
         value="//a[contains(@href, '%s')]" % what
-        return self.wait_and_click(By.XPATH, value)
+        element = self.wait_and_click(By.XPATH, value)
+        i = 10
+        while (what not in self.driver.current_url and i>0):
+            i = i - 1
+            logger.info("Loading %s " % value)
+            sleep(self.waittime)
+        if(i > 0):
+            return element
 
+    # def wait_and_click(self, by, value):
+    #     logger = logging.getLogger()
+    #     element = None
+    #     starttime = datetime.now()
+    #     seconds = 0.0
+    #     while (datetime.now() - starttime).total_seconds() < self.maxwait:
+    #         logging.info("waiting for %s %s (%ss)", by, value, seconds)
+    #         element = self.wait_for_element(by, value, starttime)
+    #         try:
+    #             element.click()
+    #         except WebDriverException:
+    #             sleep(self.waittime)
+    #             logger.info("WebDriverException while clicking %s %s", by, value)
+    #         else:
+    #             return element
+    #         seconds = (datetime.now() - starttime).total_seconds()
+    #     logger.error("failed to click %s %s", by, value)
+    #     return
 
-    def wait_and_click(self, by, value):
+    def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
         element = None
         starttime = datetime.now()
         seconds = 0.0
         while (datetime.now() - starttime).total_seconds() < self.maxwait:
-            logging.info("waiting for %s %s (%ss)", by, value, seconds)
+            logger.info("waiting for %s %s (%ss)", by, value, seconds)
             element = self.wait_for_element(by, value, starttime)
             try:
                 element.click()
             except WebDriverException:
+                if modal_by and modal_value:
+                    try:
+                        self.driver.find_element(modal_by, modal_value).click()
+                    except:
+                        logger.info("No modal.")
+                        
                 sleep(self.waittime)
                 logger.info("WebDriverException while clicking %s %s", by, value)
             else:
@@ -199,7 +224,6 @@ class WebuiSeleniumTest(unittest.TestCase):
             seconds = (datetime.now() - starttime).total_seconds()
         logger.error("failed to click %s %s", by, value)
         return
-
 
     def is_alert_present(self):
         try:
