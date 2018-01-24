@@ -4,6 +4,10 @@
 
 # selenium.common.exceptions.ElementNotInteractableException: requires >= selenium-3.4.0
 
+
+# CAUTION:
+# This test requires IDs in the WebUI that are not public (yet). Therefore it will not run!
+
 import logging, os, re, sys, unittest
 from   datetime import datetime, timedelta
 from   selenium import webdriver
