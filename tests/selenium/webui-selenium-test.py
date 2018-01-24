@@ -5,14 +5,16 @@
 # selenium.common.exceptions.ElementNotInteractableException: requires >= selenium-3.4.0
 
 import logging, os, re, sys, unittest
-from datetime import datetime, timedelta
-from selenium import webdriver
-from selenium.webdriver.common.by import By
-from selenium.webdriver.common.desired_capabilities import DesiredCapabilities
-from selenium.common.exceptions import *
-from selenium.webdriver.common.keys import Keys
-from selenium.webdriver.support.ui import Select, WebDriverWait
-from time import sleep
+from   datetime import datetime, timedelta
+from   selenium import webdriver
+from   selenium.common.exceptions import *
+from   selenium.webdriver.common.by import By
+from   selenium.webdriver.common.desired_capabilities import DesiredCapabilities
+from   selenium.webdriver.common.keys import Keys
+from   selenium.webdriver.support import expected_conditions as EC
+from   selenium.webdriver.support.ui import Select, WebDriverWait
+#from selenium.webdriver.remote.remote_connection import LOGGER
+from   time import sleep
 
 
 
@@ -31,6 +33,7 @@ class WebuiSeleniumTest(unittest.TestCase):
     # time to wait before trying again
     waittime = 0.1
 
+
     def setUp(self):
         self.logger = logging.getLogger()
 
@@ -39,19 +42,22 @@ class WebuiSeleniumTest(unittest.TestCase):
             #d['loggingPrefs'] = { 'browser':'ALL' }
             self.driver = webdriver.Chrome('/usr/local/lib/chromium-browser/chromedriver')
         if self.browser == "firefox":
-
             d = DesiredCapabilities.FIREFOX
             d['loggingPrefs'] = { 'browser':'ALL' }
             fp = webdriver.FirefoxProfile()
             fp.set_preference('webdriver.log.file', os.getcwd() + '/firefox_console.log')
             self.driver = webdriver.Firefox(capabilities=d, firefox_profile=fp)
+        #self.driver.implicitly_wait(4)
+
+        self.wait = WebDriverWait(self.driver, 10)
+
 
         # take base url, but remove last /
         self.base_url = base_url.rstrip('/')
 
         self.verificationErrors = []
         self.accept_next_alert = True
-        self.driver.implicitly_wait(3)
+
 
 
     def test_login(self):
@@ -64,15 +70,14 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver = self.driver
 
         self.driver.get(self.base_url + "/")
-
         self.login()
-        self.wait_for_url_and_click('/director/')
-        self.wait_for_url_and_click("/schedule/")
+        self.wait_and_click(By.ID, "menu-topnavbar-director")
+        self.wait_and_click(By.ID, "menu-topnavbar-schedule")
         self.wait_for_url_and_click("/schedule/status/")
         self.wait_for_url_and_click("/storage/")
         self.wait_for_url_and_click("/client/")
-        self.wait_for_url_and_click("/restore/")
-        self.wait_and_click(By.XPATH, "//button[contains(text(),'Close')]")
+        self.wait_and_click(By.ID, "menu-topnavbar-restore")
+        self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         self.logout()
 
 
@@ -103,6 +108,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.XPATH, "//input[@id='submit']")
         # Confirms alert that has text "Are you sure ?"
         self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
+        # switch to dashboard to prevent that modals are open
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-002']//button[.='Close']")
 
         # LOGOUT:
@@ -142,88 +148,82 @@ class WebuiSeleniumTest(unittest.TestCase):
     def wait_for_element(self, by, value, starttime = None):
         logger = logging.getLogger()
         element = None
-        if starttime is None:
-             starttime = datetime.now()
-        seconds = (datetime.now() - starttime).total_seconds()
-        logger.info("waiting for %s %s (%ds)", by, value, seconds)
-        while (seconds < self.maxwait) and (element is None):
-            try:
-                tmp_element = self.driver.find_element(by, value)
-                if tmp_element.is_displayed():
-                    element = tmp_element
-            except ElementNotInteractableException:
-                sleep(self.waittime)
-                logger.info("%s %s not interactable", by, value)
-            except NoSuchElementException:
-                sleep(self.waittime)
-                logger.info("%s %s not existing", by, value)
-            except ElementNotVisibleException:
-                sleep(self.waittime)
-                logger.info("%s %s not visible", by, value)
-            seconds = (datetime.now() - starttime).total_seconds()
-        if element:
-            logger.info("%s %s loaded after %ss." % (by, value, seconds))
-            sleep(self.sleeptime)
-        else:
-            logger.warning("Timeout while loading %s %s (%d s)", by, value, seconds)
+        #if starttime is None:
+             #starttime = datetime.now()
+        #seconds = (datetime.now() - starttime).total_seconds()
+        #logger.info("waiting for %s %s (%ds)", by, value, seconds)
+        #while (seconds < self.maxwait) and (element is None):
+            #try:
+                #tmp_element = self.driver.find_element(by, value)
+                #if tmp_element.is_displayed():
+                    #element = tmp_element
+            #except ElementNotInteractableException:
+                #sleep(self.waittime)
+                #logger.info("%s %s not interactable", by, value)
+            #except NoSuchElementException:
+                #sleep(self.waittime)
+                #logger.info("%s %s not existing", by, value)
+            #except ElementNotVisibleException:
+                #sleep(self.waittime)
+                #logger.info("%s %s not visible", by, value)
+            #seconds = (datetime.now() - starttime).total_seconds()
+        #if element:
+            #logger.info("%s %s loaded after %ss." % (by, value, seconds))
+            #sleep(self.sleeptime)
+        #else:
+            #logger.warning("Timeout while loading %s %s (%d s)", by, value, seconds)
+        wait = WebDriverWait(self.driver, 10) 
+        element = self.wait.until(EC.element_to_be_clickable((by, value)))
+        print element
         return element
 
 
-    def wait_for_url_and_click(self, what):
+    def wait_for_url_and_click(self, url):
         logger = logging.getLogger()
-        value="//a[contains(@href, '%s')]" % what
+        value="//a[contains(@href, '%s')]" % url
         element = self.wait_and_click(By.XPATH, value)
-        i = 10
-        while (what not in self.driver.current_url and i>0):
-            i = i - 1
-            logger.info("Loading %s " % value)
+        # wait for page to be loaded
+        starttime = datetime.now()
+        seconds = 0.0
+        while seconds < self.maxwait:
+            if (url in self.driver.current_url):
+                logger.info("%s is loaded (%d s)", url, seconds)
+                return element
+            logger.info("waiting for url %s to be loaded", url)
             sleep(self.waittime)
-        if(i > 0):
-            return element
+            seconds = (datetime.now() - starttime).total_seconds()
+        logger.warning("Timeout while waiting for url %s (%d s)", url, seconds)
 
-    # def wait_and_click(self, by, value):
-    #     logger = logging.getLogger()
-    #     element = None
-    #     starttime = datetime.now()
-    #     seconds = 0.0
-    #     while (datetime.now() - starttime).total_seconds() < self.maxwait:
-    #         logging.info("waiting for %s %s (%ss)", by, value, seconds)
-    #         element = self.wait_for_element(by, value, starttime)
-    #         try:
-    #             element.click()
-    #         except WebDriverException:
-    #             sleep(self.waittime)
-    #             logger.info("WebDriverException while clicking %s %s", by, value)
-    #         else:
-    #             return element
-    #         seconds = (datetime.now() - starttime).total_seconds()
-    #     logger.error("failed to click %s %s", by, value)
-    #     return
 
     def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
         element = None
         starttime = datetime.now()
         seconds = 0.0
-        while (datetime.now() - starttime).total_seconds() < self.maxwait:
+        while seconds < self.maxwait:
+            if modal_by and modal_value:
+                try:
+                    self.driver.find_element(modal_by, modal_value).click()
+                except:
+                    logger.info("skipped modal: %s %s not found", modal_by, modal_value)
+                else:
+                    logger.info("closing modal %s %s", modal_by, modal_value)
             logger.info("waiting for %s %s (%ss)", by, value, seconds)
             element = self.wait_for_element(by, value, starttime)
             try:
                 element.click()
-            except WebDriverException:
-                if modal_by and modal_value:
-                    try:
-                        self.driver.find_element(modal_by, modal_value).click()
-                    except:
-                        logger.info("No modal.")
-                        
+            except WebDriverException as e:
+                #logger.info("WebDriverException while clicking %s %s", by, value)
+                logger.info("WebDriverException: %s", e)
+                #logger.exception(e)
                 sleep(self.waittime)
-                logger.info("WebDriverException while clicking %s %s", by, value)
             else:
                 return element
             seconds = (datetime.now() - starttime).total_seconds()
         logger.error("failed to click %s %s", by, value)
         return
+
+
 
     def is_alert_present(self):
         try:
@@ -259,7 +259,11 @@ if __name__ == "__main__":
     # Selenium driver itself will write additional debug messages when set to DEBUG
     #logging.basicConfig(filename='webui-selenium-test.log', level=logging.DEBUG)
     #logging.basicConfig(filename='webui-selenium-test.log', level=logging.INFO)
-    logging.basicConfig(filename='webui-selenium-test.log', format='%(levelname)s %(module)s.%(funcName)s: %(message)s', level=logging.INFO)
+    debugging = os.environ.get('BAREOS_DEBUG')
+    if debugging=='on':
+        logging.basicConfig(filename='webui-selenium-test.log', format='%(levelname)s %(module)s.%(funcName)s: %(message)s', level=logging.DEBUG)
+    else:
+        logging.basicConfig(filename='webui-selenium-test.log', format='%(levelname)s %(module)s.%(funcName)s: %(message)s', level=logging.INFO)
     logger = logging.getLogger()
 
     # Get attributes as environment variables,
