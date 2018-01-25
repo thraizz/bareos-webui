@@ -34,6 +34,7 @@ class WebuiSeleniumTest(unittest.TestCase):
     waittime = 0.1
 
 
+# The tests.
     def setUp(self):
         self.logger = logging.getLogger()
 
@@ -58,13 +59,9 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.verificationErrors = []
         self.accept_next_alert = True
 
-
-
     def test_login(self):
         self.login()
         self.logout()
-
-
 
     def test_menue(self):
         driver = self.driver
@@ -74,13 +71,66 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.ID, "menu-topnavbar-director")
         self.wait_and_click(By.ID, "menu-topnavbar-schedule")
         self.wait_for_url_and_click("/schedule/status/")
-        self.wait_for_url_and_click("/storage/")
-        self.wait_for_url_and_click("/client/")
+        self.wait_and_click(By.ID, "menu-topnavbar-storage")
+        self.wait_and_click(By.ID, "menu-topnavbar-client")
         self.wait_and_click(By.ID, "menu-topnavbar-restore")
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         self.logout()
 
+    def test_run_default_job(self):
+        driver = self.driver
+        driver.get(self.base_url + "/")
+        self.login()
+        self.wait_and_click(By.ID, "menu-topnavbar-job")
+        self.wait_and_click(By.LINK_TEXT, "Run")
+        self.wait_and_click(By.XPATH, "(//button[@type='button'])[2]")
+        self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div/div/div/div/ul/li[3]/a/span")
+        Select(driver.find_element_by_id("job")).select_by_visible_text("backup-bareos-fd")
+        self.wait_and_click(By.ID, "submit");
+        self.wait_and_click(By.ID, "menu-topnavbar-dashboard")
+        self.logout()
 
+    def test_run_configured_job(self):
+
+        driver = self.driver
+        driver.get(self.base_url + "/")
+        self.login()
+        self.wait_and_click(By.ID, "menu-topnavbar-job")
+        self.wait_and_click(By.LINK_TEXT, "Run")
+        self.wait_and_click(By.XPATH, "(//button[@type='button'])[2]")
+        self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div/div/div/div/ul/li[3]/a/span")
+        Select(driver.find_element_by_id("job")).select_by_visible_text("backup-bareos-fd")
+        self.wait_and_click(By.XPATH, "(//button[@type='button'])[3]")
+        self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div[2]/div/div/div/ul/li[3]/a/span")
+        Select(driver.find_element_by_id("client")).select_by_visible_text(client)
+        Select(driver.find_element_by_id("fileset")).select_by_visible_text("SelfTest")
+        driver.find_element_by_xpath("(//button[@type='button'])[5]").click()
+        driver.find_element_by_link_text("File").click()
+        Select(driver.find_element_by_id("storage")).select_by_visible_text("File")
+        self.wait_and_click(By.XPATH, "(//button[@type='button'])[6]")
+        self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div[5]/div/div/div/ul/li[4]/a/span")
+        self.wait_and_click(By.XPATH, "(//button[@type='button'])[7]")
+        self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div[6]/div/div/div/ul/li[4]/a")
+        driver.find_element_by_id("priority").clear()
+        driver.find_element_by_id("priority").send_keys("5")
+        driver.find_element_by_css_selector("span.glyphicon.glyphicon-calendar").click()
+        self.wait_and_click(By.XPATH, "//div[@id='when-datepicker']/div/div/div[2]/div/table/tr/td[3]/a/span")
+        self.wait_and_click(By.XPATH, "//div[@id='when-datepicker']/div/div/div[2]/div/table/tr/td[3]/a/span")
+        self.wait_and_click(By.CSS_SELECTOR, "span.input-group-addon")
+        self.wait_and_click(By.ID, "submit");
+        self.wait_and_click(By.ID, "menu-topnavbar-dashboard")
+        self.logout()
+
+    def test_rerun_job(self):
+        # This tests functionality depends on existence of job id 161.
+        # It won't run if job 161 does not exit or isn't rerunnable.
+        driver = self.driver
+        driver.get(self.base_url + "/")
+        self.login()
+        self.wait_and_click(By.ID, "menu-topnavbar-job")
+        self.wait_and_click(By.XPATH, "//a[contains(@href, '/bareos-webui/job/index?action=rerun&jobid=161')]")
+        self.wait_and_click(By.ID, "menu-topnavbar-dashboard", By.XPATH, "//div[@id='modal-002']/div/div/div[3]/button")
+        self.logout()
 
     def test_restore(self):
 
@@ -114,7 +164,24 @@ class WebuiSeleniumTest(unittest.TestCase):
         # LOGOUT:
         self.logout()
 
+    def test_client_disabling(self):
+        driver = self.driver
+        driver.get(self.base_url + "/")
+        self.login()
+        # Disables client 1 and goes back to the dashboard.
+        self.wait_and_click(By.ID, "menu-topnavbar-client")
+        self.wait_and_click(By.XPATH, "(//a[@id='btn-1'])[2]")
+        self.wait_and_click(By.ID, "menu-topnavbar-client")
+        self.wait_and_click(By.CSS_SELECTOR, "span.glyphicon.glyphicon-remove")
+        self.wait_and_click(By.ID, "menu-topnavbar-dashboard",By.CSS_SELECTOR, "div.modal-footer > button.btn.btn-default")
+        # Enables client 1, goes back to dashboard and logs out.
+        self.wait_and_click(By.ID, "menu-topnavbar-client")
+        self.wait_and_click(By.XPATH, "(//a[@id='btn-1'])[3]")
+        self.wait_and_click(By.ID, "menu-topnavbar-dashboard", By.CSS_SELECTOR, "div.modal-footer > button.btn.btn-default")
+        self.logout()
 
+
+# Methods used by tests.
     def login(self):
         driver = self.driver
 
@@ -137,14 +204,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.LINK_TEXT, "Logout")
         sleep(self.sleeptime)
 
-
-
-    def wait_for_url(self, what):
-        value="//a[contains(@href, '%s')]" % what
-        return self.wait_for_element(By.XPATH, value)
-
-
-        
     def wait_for_element(self, by, value, starttime = None):
         logger = logging.getLogger()
         element = None
@@ -177,7 +236,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         print element
         return element
 
-
     def wait_for_url_and_click(self, url):
         logger = logging.getLogger()
         value="//a[contains(@href, '%s')]" % url
@@ -193,7 +251,6 @@ class WebuiSeleniumTest(unittest.TestCase):
             sleep(self.waittime)
             seconds = (datetime.now() - starttime).total_seconds()
         logger.warning("Timeout while waiting for url %s (%d s)", url, seconds)
-
 
     def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
@@ -223,16 +280,12 @@ class WebuiSeleniumTest(unittest.TestCase):
         logger.error("failed to click %s %s", by, value)
         return
 
-
-
     def is_alert_present(self):
         try:
             self.driver.switch_to_alert()
         except NoAlertPresentException as e:
             return False
         return True
-
-
 
     def close_alert_and_get_its_text(self):
         try:
