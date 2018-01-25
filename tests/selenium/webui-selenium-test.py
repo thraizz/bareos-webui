@@ -8,7 +8,7 @@
 # CAUTION:
 # This test requires IDs in the WebUI that are not public (yet). Therefore it will not run!
 
-import logging, os, re, sys, unittest
+import logging, os, re, sys, unittest, time
 from   datetime import datetime, timedelta
 from   selenium import webdriver
 from   selenium.common.exceptions import *
@@ -68,26 +68,15 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.logout()
     
     def test_menue(self):
-        
         driver = self.driver
-
-        
         self.driver.get(self.base_url + "/")
-        
         self.login()
-        
         self.wait_and_click(By.ID, "menu-topnavbar-director")
-        
         self.wait_and_click(By.ID, "menu-topnavbar-schedule")
-        
-        self.wait_for_url_and_click("/schedule/status/")
-        
+        self.wait_and_click(By.LINK_TEXT, "Scheduler status")
         self.wait_and_click(By.ID, "menu-topnavbar-storage")
-        
         self.wait_and_click(By.ID, "menu-topnavbar-client")
-        
-        self.wait_and_click(By.ID, "menu-topnavbar-restore")
-        
+        self.wait_and_click(By.ID, "menu-topnavbar-restore")    
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         self.logout()
 
@@ -100,7 +89,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.XPATH, "(//button[@type='button'])[2]")
         self.wait_and_click(By.XPATH, "//form[@id='runjob']/div/div/div/div/div/ul/li[3]/a/span")
         Select(driver.find_element_by_id("job")).select_by_visible_text("backup-bareos-fd")
-        self.wait_and_click(By.ID, "submit");
+        self.wait_and_click(By.ID, "submit")
         self.wait_and_click(By.ID, "menu-topnavbar-dashboard")
         self.logout()
 
@@ -152,7 +141,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.login()
 
         # CHANGING TO RESTORE TAB:
-        self.wait_for_url_and_click("/restore/")
+        self.wait_and_click(By.ID, "menu-topnavbar-restore") 
         self.wait_and_click(By.XPATH, "(//button[@data-id='client'])", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         
         # SELECTING CLIENT:
@@ -247,24 +236,7 @@ class WebuiSeleniumTest(unittest.TestCase):
             #logger.warning("Timeout while loading %s %s (%d s)", by, value, seconds)
         wait = WebDriverWait(self.driver, 10) 
         element = self.wait.until(EC.element_to_be_clickable((by, value)))
-        print element
         return element
-
-    def wait_for_url_and_click(self, url):
-        logger = logging.getLogger()
-        value="//a[contains(@href, '%s')]" % url
-        element = self.wait_and_click(By.XPATH, value)
-        # wait for page to be loaded
-        starttime = datetime.now()
-        seconds = 0.0
-        while seconds < self.maxwait:
-            if (url in self.driver.current_url):
-                logger.info("%s is loaded (%d s)", url, seconds)
-                return element
-            logger.info("waiting for url %s to be loaded", url)
-            sleep(self.waittime)
-            seconds = (datetime.now() - starttime).total_seconds()
-        logger.warning("Timeout while waiting for url %s (%d s)", url, seconds)
 
     def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
