@@ -38,7 +38,6 @@ class WebuiSeleniumTest(unittest.TestCase):
     waittime = 0.1
 
 
-# The tests.
     def setUp(self):
         self.logger = logging.getLogger()
 
@@ -63,6 +62,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.verificationErrors = []
         self.accept_next_alert = True
 
+# The tests.
     def test_login(self):
         self.login()
         self.logout()
