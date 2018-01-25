@@ -66,18 +66,28 @@ class WebuiSeleniumTest(unittest.TestCase):
     def test_login(self):
         self.login()
         self.logout()
-
+    
     def test_menue(self):
+        
         driver = self.driver
 
+        
         self.driver.get(self.base_url + "/")
+        
         self.login()
+        
         self.wait_and_click(By.ID, "menu-topnavbar-director")
+        
         self.wait_and_click(By.ID, "menu-topnavbar-schedule")
+        
         self.wait_for_url_and_click("/schedule/status/")
+        
         self.wait_and_click(By.ID, "menu-topnavbar-storage")
+        
         self.wait_and_click(By.ID, "menu-topnavbar-client")
+        
         self.wait_and_click(By.ID, "menu-topnavbar-restore")
+        
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         self.logout()
 
