@@ -76,7 +76,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.LINK_TEXT, "Scheduler status")
         self.wait_and_click(By.ID, "menu-topnavbar-storage")
         self.wait_and_click(By.ID, "menu-topnavbar-client")
-        self.wait_and_click(By.ID, "menu-topnavbar-restore")    
+        self.wait_and_click(By.ID, "menu-topnavbar-restore")
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         self.logout()
 
@@ -125,15 +125,19 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.logout()
 
     def test_rerun_job(self):
-        # This tests functionality depends on existence of job id 161.
-        # It won't run if job 161 does not exit or isn't rerunnable.
+        ### DOES NOT WORK (YET)
         driver = self.driver
         driver.get(self.base_url + "/")
         self.login()
-        self.wait_and_click(By.ID, "menu-topnavbar-job")
-        self.wait_and_click(By.XPATH, "//a[contains(@href, '/bareos-webui/job/index?action=rerun&jobid=161')]")
+        self.wait_and_click(By.ID, "menu-topnavbar-client")
+        self.wait_and_click(By.LINK_TEXT, self.client)
+        # nummer = driver.find_element(By.XPATH, "//div[2]/div/div/div[2]/div/div[2]/div[2]/table/tbody/tr/td/a").text()
+        # print nummer
+        self.wait_and_click(By.XPATH, "//div[2]/div/div/div[2]/div/div[2]/div[2]/table/tbody/tr/td/a").click()
+        self.wait_and_click(By.CSS_SELECTOR, "span.glyphicon.glyphicon-repeat")
         self.wait_and_click(By.ID, "menu-topnavbar-dashboard", By.XPATH, "//div[@id='modal-002']/div/div/div[3]/button")
         self.logout()
+
 
     def test_restore(self):
 
@@ -141,12 +145,12 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.login()
 
         # CHANGING TO RESTORE TAB:
-        self.wait_and_click(By.ID, "menu-topnavbar-restore") 
+        self.wait_and_click(By.ID, "menu-topnavbar-restore")
         self.wait_and_click(By.XPATH, "(//button[@data-id='client'])", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
         
         # SELECTING CLIENT:
         # Selects the correct client
-        self.wait_and_click(By.LINK_TEXT, self.client)
+        self.wait_and_click(By.LINK_TEXT, self.client, )
         
         # FILE-SELECTION:
         # Clicks on file and navigates through the tree
@@ -163,6 +167,10 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
         # switch to dashboard to prevent that modals are open
         self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-002']//button[.='Close']")
+
+        # Because of the fast change from "Restore" to "Dashboard" the Restore Tree has not enough time to build.
+        # This catches the error the Tree throws.
+        self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Oops, something went wrong, probably too many files.")
 
         # LOGOUT:
         self.logout()
@@ -200,41 +208,19 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_xpath("//input[@id='submit']").click()
         while ("/dashboard/" not in self.driver.current_url):
             sleep(self.waittime)
+        logger.info("Logged in.")
 
     def logout(self):
 
         self.wait_and_click(By.CSS_SELECTOR, "a.dropdown-toggle")
         self.wait_and_click(By.LINK_TEXT, "Logout")
+        logger.info("Logged out.")
         sleep(self.sleeptime)
 
     def wait_for_element(self, by, value, starttime = None):
         logger = logging.getLogger()
         element = None
-        #if starttime is None:
-             #starttime = datetime.now()
-        #seconds = (datetime.now() - starttime).total_seconds()
-        #logger.info("waiting for %s %s (%ds)", by, value, seconds)
-        #while (seconds < self.maxwait) and (element is None):
-            #try:
-                #tmp_element = self.driver.find_element(by, value)
-                #if tmp_element.is_displayed():
-                    #element = tmp_element
-            #except ElementNotInteractableException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not interactable", by, value)
-            #except NoSuchElementException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not existing", by, value)
-            #except ElementNotVisibleException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not visible", by, value)
-            #seconds = (datetime.now() - starttime).total_seconds()
-        #if element:
-            #logger.info("%s %s loaded after %ss." % (by, value, seconds))
-            #sleep(self.sleeptime)
-        #else:
-            #logger.warning("Timeout while loading %s %s (%d s)", by, value, seconds)
-        wait = WebDriverWait(self.driver, 10) 
+        wait = WebDriverWait(self.driver, self.waittime)
         element = self.wait.until(EC.element_to_be_clickable((by, value)))
         return element
 
@@ -244,6 +230,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         starttime = datetime.now()
         seconds = 0.0
         while seconds < self.maxwait:
+            sleep(self.waittime)
             if modal_by and modal_value:
                 try:
                     self.driver.find_element(modal_by, modal_value).click()
@@ -252,17 +239,20 @@ class WebuiSeleniumTest(unittest.TestCase):
                 else:
                     logger.info("closing modal %s %s", modal_by, modal_value)
             logger.info("waiting for %s %s (%ss)", by, value, seconds)
-            element = self.wait_for_element(by, value, starttime)
             try:
-                element.click()
-            except WebDriverException as e:
-                #logger.info("WebDriverException while clicking %s %s", by, value)
-                logger.info("WebDriverException: %s", e)
-                #logger.exception(e)
-                sleep(self.waittime)
+                element = self.wait_for_element(by, value, starttime)
+            except TimeoutException as e:
+                logger.info("TimoutException: %s", e)
+                time.sleep(self.maxwait)
             else:
-                return element
+                try:
+                    element.click()
+                except WebDriverException as e:
+                    logger.info("WebDriverException: %s", e)
+                else:
+                    return element
             seconds = (datetime.now() - starttime).total_seconds()
+            print seconds
         logger.error("failed to click %s %s", by, value)
         return
 

@@ -124,10 +124,12 @@ return array(
          array(
             'label' => _('Dashboard'),
             'route' => 'dashboard',
+						'id' => 'topnavbar-dashboard',
          ),
          array(
             'label' => _('Jobs'),
             'route' => 'job',
+						'id' => 'topnavbar-job',
             'pages' => array(
                array(
                   'label' => _('Overview'),
@@ -144,18 +146,22 @@ return array(
          array(
             'label' => _('Restore'),
             'route' => 'restore',
+						'id' => 'topnavbar-restore',
          ),
          array(
             'label' => _('Clients'),
             'route' => 'client',
+						'id' => 'topnavbar-client',
          ),
          array(
             'label' => _('Schedules'),
             'route' => 'schedule',
+						'id' => 'topnavbar-schedule',
          ),
          array(
             'label' => _('Storages'),
             'route' => 'storage',
+						'id' => 'topnavbar-storage',
             'pages' => array(
                array(
                   'label' => _('Pool'),
@@ -182,8 +188,8 @@ return array(
          array(
             'label' => _('Director'),
             'route' => 'director',
+						'id' => 'topnavbar-director',
          ),
       ),
    ),
 );
-
