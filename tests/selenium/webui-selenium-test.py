@@ -22,9 +22,9 @@ from   time import sleep
 class WebuiSeleniumTest(unittest.TestCase):
 
     browser = 'firefox'
-    base_url = "http://127.0.0.1/bareos-webui"
-    username = "admin"
-    password = "secret"
+    base_url = 'http://127.0.0.1/bareos-webui'
+    username = 'admin'
+    password = 'secret'
     client = 'bareos-fd'
     restorefile = '/usr/sbin/bconsole'
     # path to store logging files
@@ -49,7 +49,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         )
         self.logger = logging.getLogger()
 
-        if self.browser == "chrome":
+        if self.browser == 'chrome':
             #d = DesiredCapabilities.CHROME
             #d['loggingPrefs'] = { 'browser':'ALL' }
             self.driver = webdriver.Chrome('/usr/lib/chromium-browser/chromedriver')
@@ -85,13 +85,13 @@ class WebuiSeleniumTest(unittest.TestCase):
 
         self.login()
         self.wait_for_url_and_click('/director/')
-        self.wait_for_url_and_click("/schedule/")
-        self.wait_for_url_and_click("/schedule/status/")
-        self.wait_for_url_and_click("/storage/")
-        self.wait_for_url_and_click("/client/")
-        self.wait_for_url_and_click("/restore/")
-        self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
-        #self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Oops, something went wrong, probably too many files.")
+        self.wait_for_url_and_click('/schedule/')
+        self.wait_for_url_and_click('/schedule/status/')
+        self.wait_for_url_and_click('/storage/')
+        self.wait_for_url_and_click('/client/')
+        self.wait_for_url_and_click('/restore/')
+        self.wait_and_click(By.XPATH, '//a[contains(@href, "/dashboard/")]', By.XPATH, '//div[@id="modal-001"]//button[.="Close"]')
+        #self.assertRegexpMatches(self.close_alert_and_get_its_text(), r'^Oops, something went wrong, probably too many files.')
         self.close_alert_and_get_its_text()
         self.logout()
 
@@ -103,8 +103,8 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.login()
 
         # CHANGING TO RESTORE TAB:
-        self.wait_for_url_and_click("/restore/")
-        self.wait_and_click(By.XPATH, "(//button[@data-id='client'])", By.XPATH, "//div[@id='modal-001']//button[.='Close']")
+        self.wait_for_url_and_click('/restore/')
+        self.wait_and_click(By.XPATH, '(//button[@data-id="client"])', By.XPATH, '//div[@id="modal-001"]//button[.="Close"]')
         
         # SELECTING CLIENT:
         # Selects the correct client
@@ -115,16 +115,16 @@ class WebuiSeleniumTest(unittest.TestCase):
         # by using the arrow-keys.
         pathlist = self.restorefile.split('/')
         for i in pathlist[:-1]:
-            self.wait_for_element(By.XPATH, "//a[contains(text(),'%s/')]" % i).send_keys(Keys.ARROW_RIGHT)
-        self.wait_for_element(By.XPATH, "//a[contains(text(),'%s')]" % pathlist[-1]).click()
+            self.wait_for_element(By.XPATH, '//a[contains(text(),"%s/")]' % i).send_keys(Keys.ARROW_RIGHT)
+        self.wait_for_element(By.XPATH, '//a[contains(text(),"%s")]' % pathlist[-1]).click()
 
         # CONFIRMATION:
         # Clicks on 'submit'
-        self.wait_and_click(By.XPATH, "//input[@id='submit']")
-        # Confirms alert that has text "Are you sure ?"
-        self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Are you sure[\s\S]$")
+        self.wait_and_click(By.XPATH, '//input[@id="submit"]')
+        # Confirms alert that has text 'Are you sure ?'
+        self.assertRegexpMatches(self.close_alert_and_get_its_text(), r'^Are you sure[\s\S]$')
         # switch to dashboard to prevent that modals are open
-        self.wait_and_click(By.XPATH, "//a[contains(@href, '/dashboard/')]", By.XPATH, "//div[@id='modal-002']//button[.='Close']")
+        self.wait_and_click(By.XPATH, '//a[contains(@href, "/dashboard/")]', By.XPATH, '//div[@id="modal-002"]//button[.="Close"]')
         #self.assertRegexpMatches(self.close_alert_and_get_its_text(), r"^Oops, something went wrong, probably too many files.")
         self.close_alert_and_get_its_text()
 
@@ -135,29 +135,29 @@ class WebuiSeleniumTest(unittest.TestCase):
     def login(self):
         driver = self.driver
 
-        driver.get(self.base_url + "/auth/login")
-        Select(driver.find_element_by_name("director")).select_by_visible_text("localhost-dir")
+        driver.get(self.base_url + '/auth/login')
+        Select(driver.find_element_by_name('director')).select_by_visible_text('localhost-dir')
 
-        driver.find_element_by_name("consolename").clear()
-        driver.find_element_by_name("consolename").send_keys(self.username)
-        driver.find_element_by_name("password").clear()
-        driver.find_element_by_name("password").send_keys(self.password)
-        driver.find_element_by_xpath("(//button[@type='button'])[2]").click()
-        driver.find_element_by_link_text("English").click()
-        driver.find_element_by_xpath("//input[@id='submit']").click()
-        while ("/dashboard/" not in self.driver.current_url):
+        driver.find_element_by_name('consolename').clear()
+        driver.find_element_by_name('consolename').send_keys(self.username)
+        driver.find_element_by_name('password').clear()
+        driver.find_element_by_name('password').send_keys(self.password)
+        driver.find_element_by_xpath('(//button[@type="button"])[2]').click()
+        driver.find_element_by_link_text('English').click()
+        driver.find_element_by_xpath('//input[@id="submit"]').click()
+        while ('/dashboard/' not in self.driver.current_url):
             sleep(self.waittime)
 
     def logout(self):
 
-        self.wait_and_click(By.CSS_SELECTOR, "a.dropdown-toggle")
-        self.wait_and_click(By.LINK_TEXT, "Logout")
+        self.wait_and_click(By.CSS_SELECTOR, 'a.dropdown-toggle')
+        self.wait_and_click(By.LINK_TEXT, 'Logout')
         sleep(self.sleeptime)
 
 
 
     def wait_for_url(self, what):
-        value="//a[contains(@href, '%s')]" % what
+        value='//a[contains(@href, "%s")]' % what
         return self.wait_for_element(By.XPATH, value)
 
 
@@ -165,51 +165,51 @@ class WebuiSeleniumTest(unittest.TestCase):
     def wait_for_element(self, by, value, starttime = None):
         logger = logging.getLogger()
         element = None
-        #if starttime is None:
-             #starttime = datetime.now()
-        #seconds = (datetime.now() - starttime).total_seconds()
-        #logger.info("waiting for %s %s (%ds)", by, value, seconds)
-        #while (seconds < self.maxwait) and (element is None):
-            #try:
-                #tmp_element = self.driver.find_element(by, value)
-                #if tmp_element.is_displayed():
-                    #element = tmp_element
-            #except ElementNotInteractableException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not interactable", by, value)
-            #except NoSuchElementException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not existing", by, value)
-            #except ElementNotVisibleException:
-                #sleep(self.waittime)
-                #logger.info("%s %s not visible", by, value)
-            #seconds = (datetime.now() - starttime).total_seconds()
-        #if element:
-            #logger.info("%s %s loaded after %ss." % (by, value, seconds))
-            #sleep(self.sleeptime)
-        #else:
-            #logger.warning("Timeout while loading %s %s (%d s)", by, value, seconds)
-        logger.info("waiting for %s %s", by, value)
+        # if starttime is None:
+        #      starttime = datetime.now()
+        # seconds = (datetime.now() - starttime).total_seconds()
+        # logger.info('waiting for %s %s (%ds)', by, value, seconds)
+        # while (seconds < self.maxwait) and (element is None):
+        #     try:
+        #         tmp_element = self.driver.find_element(by, value)
+        #         if tmp_element.is_displayed():
+        #             element = tmp_element
+        #     except ElementNotInteractableException:
+        #         sleep(self.waittime)
+        #         logger.info('%s %s not interactable', by, value)
+        #     except NoSuchElementException:
+        #         sleep(self.waittime)
+        #         logger.info('%s %s not existing', by, value)
+        #     except ElementNotVisibleException:
+        #         sleep(self.waittime)
+        #         logger.info('%s %s not visible', by, value)
+        #     seconds = (datetime.now() - starttime).total_seconds()
+        # if element:
+        #     logger.info('%s %s loaded after %ss.' % (by, value, seconds))
+        #     sleep(self.sleeptime)
+        # else:
+        #     logger.warning('Timeout while loading %s %s (%d s)', by, value, seconds)
+        logger.info('waiting for %s %s', by, value)
         element = self.wait.until(EC.element_to_be_clickable((by, value)))
         return element
 
 
     def wait_for_url_and_click(self, url):
         logger = logging.getLogger()
-        value="//a[contains(@href, '%s')]" % url
+        value='//a[contains(@href, "%s")]' % url
         element = self.wait_and_click(By.XPATH, value)
         # wait for page to be loaded
         starttime = datetime.now()
         seconds = 0.0
         while seconds < self.maxwait:
             if (url in self.driver.current_url):
-                logger.info("%s is loaded (%d s)", url, seconds)
+                logger.info('%s is loaded (%d s)', url, seconds)
                 return element
-            logger.info("waiting for url %s to be loaded", url)
+            logger.info('waiting for url %s to be loaded', url)
             sleep(self.waittime)
             seconds = (datetime.now() - starttime).total_seconds()
-        logger.warning("Timeout while waiting for url %s (%d s)", url, seconds)
-
+        # logger.warning('Timeout while waiting for url %s (%d s)', url, seconds)
+        raise ("Timeout while waiting for url %s (%d s)", url, seconds)
 
     def wait_and_click(self, by, value, modal_by=None, modal_value=None):
         logger = logging.getLogger()
@@ -221,22 +221,22 @@ class WebuiSeleniumTest(unittest.TestCase):
                 try:
                     self.driver.find_element(modal_by, modal_value).click()
                 except:
-                    logger.info("skipped modal: %s %s not found", modal_by, modal_value)
+                    logger.info('skipped modal: %s %s not found', modal_by, modal_value)
                 else:
-                    logger.info("closing modal %s %s", modal_by, modal_value)
-            logger.info("waiting for %s %s (%ss)", by, value, seconds)
+                    logger.info('closing modal %s %s', modal_by, modal_value)
+            logger.info('waiting for %s %s (%ss)', by, value, seconds)
             element = self.wait_for_element(by, value, starttime)
             try:
                 element.click()
             except WebDriverException as e:
-                #logger.info("WebDriverException while clicking %s %s", by, value)
-                logger.info("WebDriverException: %s", e)
+                #logger.info('WebDriverException while clicking %s %s', by, value)
+                logger.info('WebDriverException: %s', e)
                 #logger.exception(e)
                 sleep(self.waittime)
             else:
                 return element
             seconds = (datetime.now() - starttime).total_seconds()
-        logger.error("failed to click %s %s", by, value)
+        logger.error('failed to click %s %s', by, value)
         return
 
 
@@ -267,7 +267,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         
 
 
-if __name__ == "__main__":
+if __name__ == '__main__':
     # Get attributes as environment variables,
     # if not available or set use defaults.
     browser = os.environ.get('BAREOS_BROWSER')
