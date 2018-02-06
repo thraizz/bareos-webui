@@ -48,7 +48,7 @@ class WebuiSeleniumTest(unittest.TestCase):
                 level=logging.INFO
         )
         self.logger = logging.getLogger()
-
+        self.logger.info("===================== TESTING =====================")
         if self.browser == 'chrome':
             #d = DesiredCapabilities.CHROME
             #d['loggingPrefs'] = { 'browser':'ALL' }
@@ -154,15 +154,21 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.wait_and_click(By.LINK_TEXT, 'Logout')
         sleep(self.sleeptime)
 
-
+    def wait_for_spinner_absence(self):##RENAME
+        logger = logging.getLogger()
+        element = None
+        while element is None:
+            try:
+                element = WebDriverWait(self.driver, self.maxwait).until(EC.invisibility_of_element_located((By.ID, 'spinner')))
+            except TimeoutException:
+                logger.info("Waiting for %s %s", by, value)
+        return element
 
     def wait_for_url(self, what):
         value='//a[contains(@href, "%s")]' % what
         return self.wait_for_element(By.XPATH, value)
-
-
         
-    def wait_for_element(self, by, value, starttime = None):
+    def wait_for_element(self, by, value):
         logger = logging.getLogger()
         element = None
         # if starttime is None:
@@ -193,7 +199,6 @@ class WebuiSeleniumTest(unittest.TestCase):
         element = self.wait.until(EC.element_to_be_clickable((by, value)))
         return element
 
-
     def wait_for_url_and_click(self, url):
         logger = logging.getLogger()
         value='//a[contains(@href, "%s")]' % url
@@ -217,6 +222,7 @@ class WebuiSeleniumTest(unittest.TestCase):
         starttime = datetime.now()
         seconds = 0.0
         while seconds < self.maxwait:
+            self.wait_for_spinner_absence()
             if modal_by and modal_value:
                 try:
                     self.driver.find_element(modal_by, modal_value).click()
@@ -225,21 +231,20 @@ class WebuiSeleniumTest(unittest.TestCase):
                 else:
                     logger.info('closing modal %s %s', modal_by, modal_value)
             logger.info('waiting for %s %s (%ss)', by, value, seconds)
-            element = self.wait_for_element(by, value, starttime)
+            element = self.wait_for_element(by, value)
             try:
                 element.click()
             except WebDriverException as e:
-                #logger.info('WebDriverException while clicking %s %s', by, value)
                 logger.info('WebDriverException: %s', e)
-                #logger.exception(e)
+                sleep(self.waittime)
+            except NoSuchElementException as e:
+                logger.info("NoSuchElementException while clicking: %s", e)
                 sleep(self.waittime)
             else:
                 return element
             seconds = (datetime.now() - starttime).total_seconds()
         logger.error('failed to click %s %s', by, value)
-        return
-
-
+        raise Exception
 
     def close_alert_and_get_its_text(self, accept=True):
         logger = logging.getLogger()
@@ -259,12 +264,9 @@ class WebuiSeleniumTest(unittest.TestCase):
 
         return alert_text
 
-
-
     def tearDown(self):
         self.driver.quit()
         self.assertEqual([], self.verificationErrors)
-        
 
 
 if __name__ == '__main__':
