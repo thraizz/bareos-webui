@@ -19,12 +19,12 @@ msgstr ""
 
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Newtestedit1"
+msgid "Dashboard"
 msgstr ""
 
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
-msgid "Newtestedit2"
+msgid "Jobs"
 msgstr ""
 
 #: ../../../module/Application/config/module.config.php:133
@@ -32,7 +32,7 @@ msgstr ""
 #: ../../../module/Schedule/view/schedule/schedule/overview.phtml:33
 #: ../../../module/Schedule/view/schedule/schedule/status.phtml:32
 #: ../../../module/Schedule/view/schedule/schedule/index.phtml:33
-msgid "Newtestedit3"
+msgid "Overview"
 msgstr ""
 
 #: ../../../module/Application/config/module.config.php:138

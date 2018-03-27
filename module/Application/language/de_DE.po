@@ -20,31 +20,21 @@ msgstr ""
 
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Newtestedit1"
-msgstr ""
+msgid "Dashboard"
+msgstr "Übersicht"
 
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
-msgid "Newtestedit2"
-msgstr ""
+msgid "Jobs"
+msgstr "Aufträge"
 
 #: ../../../module/Application/config/module.config.php:133
 #: ../../../module/Schedule/view/schedule/schedule/details.phtml:33
 #: ../../../module/Schedule/view/schedule/schedule/overview.phtml:33
 #: ../../../module/Schedule/view/schedule/schedule/status.phtml:32
 #: ../../../module/Schedule/view/schedule/schedule/index.phtml:33
-msgid "Newtestedit3"
-msgstr ""
-
-#: ../../../module/Application/config/module.config.php:138
-#: ../../../module/Job/view/job/job/run.phtml:34
-#: ../../../module/Job/view/job/job/actions.phtml:34
-#: ../../../module/Job/view/job/job/actions.phtml:138
-#: ../../../module/Job/view/job/job/actions.phtml:141
-#: ../../../module/Job/view/job/job/details.phtml:34
-#: ../../../module/Job/view/job/job/index.phtml:34
-msgid "Run"
-msgstr "Ausführen"
+msgid "Overview"
+msgstr "Übersicht"
 
 #: ../../../module/Application/config/module.config.php:145
 #: ../../../module/Client/view/client/client/details.phtml:142
