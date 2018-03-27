@@ -19,7 +19,7 @@ msgstr ""
 
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Dashboard"
+msgid "Dashboard_edit"
 msgstr ""
 
 #: ../../../module/Application/config/module.config.php:129
