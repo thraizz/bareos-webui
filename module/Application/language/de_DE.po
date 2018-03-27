@@ -20,21 +20,21 @@ msgstr ""
 
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Dashboard"
-msgstr "Übersicht"
+msgid "Newtestedit1"
+msgstr ""
 
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
-msgid "Jobs"
-msgstr "Aufträge"
+msgid "Newtestedit2"
+msgstr ""
 
 #: ../../../module/Application/config/module.config.php:133
 #: ../../../module/Schedule/view/schedule/schedule/details.phtml:33
 #: ../../../module/Schedule/view/schedule/schedule/overview.phtml:33
 #: ../../../module/Schedule/view/schedule/schedule/status.phtml:32
 #: ../../../module/Schedule/view/schedule/schedule/index.phtml:33
-msgid "Overview"
-msgstr "Übersicht"
+msgid "Newtestedit3"
+msgstr ""
 
 #: ../../../module/Application/config/module.config.php:138
 #: ../../../module/Job/view/job/job/run.phtml:34
