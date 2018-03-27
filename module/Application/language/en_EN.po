@@ -9,12 +9,12 @@ msgstr ""
 
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Dashboard_edit"
+msgid "Dashboard_edited"
 msgstr ""
 
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
-msgid "Jobs"
+msgid "Jobs_edited"
 msgstr "Jobs"
 
 #: ../../../module/Application/config/module.config.php:133
