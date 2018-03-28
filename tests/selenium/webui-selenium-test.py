@@ -324,13 +324,16 @@ class WebuiSeleniumTest(unittest.TestCase):
         try:
             element = self.wait.until(EC.element_to_be_clickable((by, value)))
         except TimeoutException:
+            self.driver.save_screenshot('screenshot.png')
             raise ElementTimeoutException(value)
         if element==None:
             try:
                 self.driver.find_element(by, value)
             except NoSuchElementException:
+                self.driver.save_screenshot('screenshot.png')
                 raise ElementNotFoundException(value)
             else:
+                self.driver.save_screenshot('screenshot.png')
                 raise ElementCoveredException(value)
         return element
 
