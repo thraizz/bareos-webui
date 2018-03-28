@@ -1394,10 +1394,10 @@ msgstr "Newtestedit3"
 #: ../../../module/Application/config/module.config.php:125
 #: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
 msgid "Dashboard_edited"
-msgstr "Dashboard"
+msgstr "Dashboard_edited"
 
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
 msgid "Jobs_edited"
-msgstr "Jobs"
+msgstr "Jobs_edited"
 
