@@ -291,7 +291,13 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_xpath('//input[@id="submit"]').click()
         # while ('/dashboard/' not in self.driver.current_url):
         #     sleep(self.waittime)
-        self.wait_for_spinner_absence()
+        element=None
+        try:
+            element = driver.find_element_by_xpath('//div[@role="alert"]')
+        except:
+            self.wait_for_spinner_absence()
+        else:
+            raise WrongCredentialsException(self.username, self.password)
 
     def logout(self):
         self.wait_and_click(By.CSS_SELECTOR, 'a.dropdown-toggle')

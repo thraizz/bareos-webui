@@ -38,10 +38,16 @@ class ElementNotFoundException(Exception):
     '''Raise when an element is not found'''
     def __init__(self, value):
         msg = 'Element %s was not found.' % value
-        super(ElementTimeoutException, self).__init__(msg)
+        super(ElementNotFoundException, self).__init__(msg)
 
 class FailedClickException(Exception):
     '''Raise when wait_and_click fails'''
     def __init__(self, value):
         msg = 'Waiting and trying to click %s failed.' % value
         super(FailedClickException, self).__init__(msg)
+
+class WrongCredentialsException(Exception):
+    '''Raise when wait_and_click fails'''
+    def __init__(self, username, password):
+        msg = 'Username "%s" or password "%s" is wrong.' % (username,password)
+        super(WrongCredentialsException, self).__init__(msg)
