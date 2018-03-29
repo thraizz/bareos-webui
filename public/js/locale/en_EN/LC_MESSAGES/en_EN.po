@@ -7,11 +7,6 @@ msgstr ""
 "Project-Id-Version: BareosTest\n"
 "Language: en\n"
 
-#: ../../../module/Application/config/module.config.php:125
-#: ../../../module/Dashboard/view/dashboard/dashboard/index.phtml:26
-msgid "Dashboard"
-msgstr "Dashboard"
-
 #: ../../../module/Application/config/module.config.php:129
 #: ../../../module/Dashboard/view/partial/JobTotals.phtml:40
 msgid "Jobs"
@@ -35,13 +30,7 @@ msgstr "Overview"
 msgid "Run"
 msgstr "Run"
 
-#: ../../../module/Application/config/module.config.php:145
-#: ../../../module/Client/view/client/client/details.phtml:142
-#: ../../../module/Client/view/client/client/index.phtml:217
-#: ../../../module/Job/view/job/job/index.phtml:262
-#: ../../../module/Job/view/job/job/index.phtml:264
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:594
-#: ../../../module/Restore/view/restore/restore/index.phtml:26
+#: ../../js/custom-functions.js:102
 msgid "Restore"
 msgstr "Restore"
 
@@ -449,11 +438,15 @@ msgstr "End"
 msgid "Jobs started during the past 24 hours"
 msgstr "Jobs started during the past 24 hours"
 
-#: ../../../module/Dashboard/view/partial/JobsPast24h.phtml:44
+#: ../../js/custom-functions.js:336
 msgid "Running"
 msgstr "Running"
 
-#: ../../../module/Dashboard/view/partial/JobsPast24h.phtml:55
+#: ../../js/custom-functions.js:356 ../../js/custom-functions.js:360
+#: ../../js/custom-functions.js:364 ../../js/custom-functions.js:368
+#: ../../js/custom-functions.js:372 ../../js/custom-functions.js:376
+#: ../../js/custom-functions.js:380 ../../js/custom-functions.js:384
+#: ../../js/custom-functions.js:388 ../../js/custom-functions.js:392
 msgid "Waiting"
 msgstr "Waiting"
 
@@ -950,19 +943,11 @@ msgstr "Restore job"
 msgid "Merge all client filesets"
 msgstr "Merge all client filesets"
 
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:323
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:342
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:363
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:382
-#: ../../../module/Storage/view/storage/storage/index.phtml:107
+#: ../../js/custom-functions.js:307
 msgid "Yes"
 msgstr "Yes"
 
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:324
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:343
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:364
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:383
-#: ../../../module/Storage/view/storage/storage/index.phtml:105
+#: ../../js/custom-functions.js:310
 msgid "No"
 msgstr "No"
 
@@ -982,7 +967,7 @@ msgstr "Replace files on client"
 msgid "always"
 msgstr "always"
 
-#: ../../../module/Restore/src/Restore/Form/RestoreForm.php:403
+#: ../../js/custom-functions.js:245
 msgid "never"
 msgstr "never"
 
