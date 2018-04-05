@@ -22,6 +22,10 @@ msgstr ""
 msgid "Backup"
 msgstr ""
 
+#: ../../js/custom-functions.js:93
+msgid "Backup2"
+msgstr ""
+
 #: ../../js/custom-functions.js:96
 msgid "Migrated"
 msgstr ""
