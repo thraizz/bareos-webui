@@ -171,6 +171,22 @@ class WebuiSeleniumTest(unittest.TestCase):
         self.login()
         self.logout()
 
+    def test_languages(self):
+
+        driver = self.driver
+        driver.get(self.base_url + '/auth/login')
+        self.driver.find_element_by_xpath('//button[@data-id="locale"]').click()
+        # Set expected languages as a list
+        expected_languages = {'Chinese','Czech','Dutch/Belgium','English','French','German','Italian','Russian','Slovak','Spanish','Turkish'}
+        # Append text of each element found by xpath into 'elements' list
+        elements = []
+        for element in self.driver.find_elements_by_xpath('//ul[@aria-expanded="true"]/li[@data-original-index>"0"]/a/span[@class="text"]'):
+               elements.append(element.text)
+        # If both lists match return true
+        b = bool(set(expected_languages)==set(elements))
+        if not b:
+            raise LocaleException(expected_languages,elements)
+
     def test_menue(self):
 
         self.login()
@@ -250,6 +266,10 @@ class WebuiSeleniumTest(unittest.TestCase):
         except NoSuchElementException:
             raise ClientNotFoundException(self.client)
         return status
+
+    def compare_locales(self):
+
+        return b
 
     def job_cancel(self, id):
         # Go to job list

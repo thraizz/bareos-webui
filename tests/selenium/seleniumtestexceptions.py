@@ -46,6 +46,15 @@ class FailedClickException(Exception):
         msg = 'Waiting and trying to click %s failed.' % value
         super(FailedClickException, self).__init__(msg)
 
+class LocaleException(Exception):
+    '''Raise when wait_and_click fails'''
+    def __init__(self, expected_languages, elements):
+        if len(expected_languages)!=len(elements):
+            msg = 'The available languages in login did not meet expectations.\n Expected '+str(len(expected_languages))+' languages but got '+str(len(elements))+'. Dropdown menue misses '+''.join(list(set(expected_languages) - set(elements)))+'.'
+        else:
+             msg = 'The available languages in login did not meet expectations.\n'+'Dropdown menue misses language '+''.join(list(set(expected_languages) - set(elements)))+' or the name changed.'
+        super(LocaleException, self).__init__(msg)
+
 class WrongCredentialsException(Exception):
     '''Raise when wait_and_click fails'''
     def __init__(self, username, password):
