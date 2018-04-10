@@ -294,9 +294,13 @@ class WebuiSeleniumTest(unittest.TestCase):
         driver.find_element_by_id('priority').send_keys('5')
         # Open the calendar
         self.wait_and_click(By.CSS_SELECTOR, "span.glyphicon.glyphicon-calendar")
-        # Click the icon to delay jobstart by 1min two times
-        self.wait_and_click(By.XPATH, '//td[3]/a/span')
-        self.wait_and_click(By.XPATH, '//td[3]/a/span')
+        # Click the icon to delay jobstart by 1h six times
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
+        self.wait_and_click(By.XPATH, '//a[@title="Increment Hour"]')
         # Close the calendar
         self.wait_and_click(By.CSS_SELECTOR, 'span.input-group-addon')
         # Submit the job
